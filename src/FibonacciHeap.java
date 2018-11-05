@@ -17,7 +17,6 @@ public class FibonacciHeap {
 	}
 	
 	public void getMostUsed(int num) {
-		System.out.println("num123:" + num);
 		return;
 	}
 	
