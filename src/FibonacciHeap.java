@@ -22,22 +22,22 @@ public class FibonacciHeap {
 		ArrayList<Node> deletedNodes = new ArrayList<Node>();
 		ArrayList<String> result = new ArrayList<String>();
 		for (int i = 0; i < num; i++) {
-			Node deleted = deleteMax();
-			deletedNodes.add(deleted);
-			result.add(deleted.name);
+			deletedNodes.add(maxNode);
+			result.add(maxNode.name);
+			System.out.println(maxNode.name);
+			deleteMax();
 		}
 		// insert it back into the fibHeap
 		return result;
 	}
 
-	Node deleteMax() {
+	void deleteMax() {
 		// take the children of maxNode and insert it to the top level circular list
 		for (Node child : maxNode.children)
 			insert(child);
 		// detach maxNode from the toplevel circular list
 		remove(maxNode);
 		maxNode = head;
-		displayTopCircularList();
 		// count the num of nodes in top circular list
 		Node curr = this.head;
 		int size = 0;
@@ -45,7 +45,6 @@ public class FibonacciHeap {
 			size++;
 			curr = curr.next;
 		} while (curr != this.head);
-		System.out.println(size);
 		// start melding
 		HashMap<Integer, Node> degreeMap = new HashMap<Integer, Node>();
 		degreeMap.put(head.children.size(), head);
@@ -55,7 +54,6 @@ public class FibonacciHeap {
 			int degree = curr.children.size();
 			Node next = curr.next;
 			while(degreeMap.containsKey(degree)) {
-				System.out.println("meld("+degreeMap.get(degree).val+","+curr.val+")");
 				Node meldedNode = meld(degreeMap.get(degree), curr);
 				degreeMap.remove(degree);
 				degree = meldedNode.children.size();
@@ -68,8 +66,6 @@ public class FibonacciHeap {
 			curr = next;
 			count++;
 		}
-		System.out.println("maxNode is now:"+maxNode.val);
-		return maxNode;
 	}
 	
 	void displayDegreeMap(HashMap<Integer, Node> map) {
@@ -82,12 +78,10 @@ public class FibonacciHeap {
 		remove(node1);
 		remove(node2);
 		if (node1.val > node2.val) {
-			System.out.println(node1.val + "is parent of" + node2.val);
 			node1.children.add(node2);
 			insert(node1);
 			return node1;
 		} else {
-			System.out.println(node2.val + "is parent of" + node1.val);
 			node2.children.add(node1);
 			insert(node2);
 			return node2;
