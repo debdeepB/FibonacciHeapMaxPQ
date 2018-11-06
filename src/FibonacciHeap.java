@@ -35,17 +35,74 @@ public class FibonacciHeap {
 		for (Node child : maxNode.children)
 			insert(child);
 		// detach maxNode from the toplevel circular list
-		maxNode.prev.next = maxNode.next;
-		maxNode.next.prev = maxNode.prev;
-		if (head == maxNode) head = maxNode.next;
+		remove(maxNode);
 		displayTopCircularList();
+		// count the num of nodes in top circular list
+		Node curr = this.head;
+		int size = 0;
+		do {
+			size++;
+			curr = curr.next;
+		} while (curr != this.head);
+		System.out.println(size);
+		// start melding
+		HashMap<Integer, Node> degreeMap = new HashMap<Integer, Node>();
+		degreeMap.put(head.children.size(), head);
+		curr = head.next;
+		while (size > 1) {
+			int degree = curr.children.size();
+			Node next = curr.next;
+			if (degreeMap.containsKey(degree)) {
+				Node meldedNode = new Node();
+				while(degreeMap.containsKey(degree)) {
+					System.out.println("meld("+degreeMap.get(degree).val+","+curr.val+")");
+					meldedNode = meld(degreeMap.get(degree), curr);
+					degreeMap.remove(degree);
+					degree = meldedNode.children.size();
+					curr = meldedNode;
+				}
+				degreeMap.put(degree, meldedNode);
+			} else {
+				degreeMap.put(degree, curr);
+			}
+			curr = next;
+			size--;
+		}
 		return maxNode;
+	}
+	
+	void displayDegreeMap(HashMap<Integer, Node> map) {
+		for (int key: map.keySet()) {
+			System.out.println(key+":"+map.get(key).val);
+		}
+	}
+	
+	Node meld(Node node1, Node node2) {
+		remove(node1);
+		remove(node2);
+		if (node1.val > node2.val) {
+			System.out.println(node1.val + "is parent of" + node2.val);
+			node1.children.add(node2);
+			insert(node1);
+			return node1;
+		} else {
+			System.out.println(node2.val + "is parent of" + node1.val);
+			node2.children.add(node1);
+			insert(node2);
+			return node2;
+		}
+	}
+	
+	void remove(Node node) {
+		node.prev.next = node.next;
+		node.next.prev = node.prev;
+		if (head == node) head = node.next;
 	}
 	
 	public void displayTopCircularList() {
 		Node curr = this.head;
 		do {
-			System.out.print(curr.val + "-->");
+			System.out.print(curr.val + "(children:" +curr.children.size() + ")-->");
 			curr = curr.next;
 		} while (curr != this.head);
 		System.out.println("back to head");
