@@ -36,6 +36,7 @@ public class FibonacciHeap {
 			insert(child);
 		// detach maxNode from the toplevel circular list
 		remove(maxNode);
+		maxNode = head;
 		displayTopCircularList();
 		// count the num of nodes in top circular list
 		Node curr = this.head;
@@ -49,25 +50,25 @@ public class FibonacciHeap {
 		HashMap<Integer, Node> degreeMap = new HashMap<Integer, Node>();
 		degreeMap.put(head.children.size(), head);
 		curr = head.next;
-		while (size > 1) {
+		int count = 1;
+		while (count < size) {
 			int degree = curr.children.size();
 			Node next = curr.next;
-			if (degreeMap.containsKey(degree)) {
-				Node meldedNode = new Node();
-				while(degreeMap.containsKey(degree)) {
-					System.out.println("meld("+degreeMap.get(degree).val+","+curr.val+")");
-					meldedNode = meld(degreeMap.get(degree), curr);
-					degreeMap.remove(degree);
-					degree = meldedNode.children.size();
-					curr = meldedNode;
-				}
-				degreeMap.put(degree, meldedNode);
-			} else {
-				degreeMap.put(degree, curr);
+			while(degreeMap.containsKey(degree)) {
+				System.out.println("meld("+degreeMap.get(degree).val+","+curr.val+")");
+				Node meldedNode = meld(degreeMap.get(degree), curr);
+				degreeMap.remove(degree);
+				degree = meldedNode.children.size();
+				curr = meldedNode;
+			}
+			degreeMap.put(degree, curr);
+			if (maxNode.val < curr.val) {
+				maxNode = curr;
 			}
 			curr = next;
-			size--;
+			count++;
 		}
+		System.out.println("maxNode is now:"+maxNode.val);
 		return maxNode;
 	}
 	
