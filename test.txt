@@ -4,5 +4,9 @@ $amazon 2
 $gmail 4
 $weather 1
 $news 0
-1
+6
+$debdeep 7
+$aditi 9
+$lolol 1
+3
 stop
