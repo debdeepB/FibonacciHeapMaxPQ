@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -22,11 +23,18 @@ public class Main {
 					String[] words = line.split(" ");
 					fh.insertOrUpdate(words[0].substring(1), Integer.parseInt(words[1]));
 				} else {
-					fh.getMostUsed(Integer.parseInt(line));
+					ArrayList<String> mostUsed = fh.getMostUsed(Integer.parseInt(line));
+					System.out.println("#########################################");
+					for (String res : mostUsed) {
+						System.out.println(res);
+					}
+					fh.displayTopCircularList();
+					System.out.println("maxNode:"+fh.maxNode.name);
 				}
 			}
 			sc.close();
 			fh.displayTopCircularList();
+			System.out.println("maxNode:"+fh.maxNode.name);
 		} catch (FileNotFoundException e) {
 			System.out.println("Please enter a valid file url");
 			e.printStackTrace();

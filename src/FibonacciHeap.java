@@ -5,7 +5,7 @@ public class FibonacciHeap {
 	private HashMap<String, Node> map = new HashMap<String, Node>();
 	
 	Node head;
-	Node maxNode;
+	public Node maxNode;
 	
 	public void insertOrUpdate(String str, int frequency) {
 		if (map.containsKey(str)) {
@@ -29,17 +29,25 @@ public class FibonacciHeap {
 			deleteMax();
 			displayTopCircularList();
 		}
+		
 		// insert it back into the fibHeap
+		for (int i =0; i < deletedNodes.size(); i++) {
+			deletedNodes.get(i).child = null;
+			deletedNodes.get(i).degree = 0;
+			deletedNodes.get(i).parent = null;
+			insert(deletedNodes.get(i));
+		}
+		
 		return result;
 	}
 
 	void deleteMax() {
 		// take the children of maxNode and insert it to the top level circular list
-		System.out.println("maxNode");
+		// System.out.println("maxNode");
 		maxNode.display();
 		Node child = maxNode.child;
 		for (int i = 0; i < maxNode.degree; i++) {
-			System.out.println("Inserting" + child.val);
+			// System.out.println("Inserting" + child.val);
 			Node sibling = child.next;
 			// detach it from the linked list
 			child.prev.next = child.next;
@@ -53,8 +61,8 @@ public class FibonacciHeap {
 		// detach maxNode from the toplevel circular list
 		remove(maxNode);
 		if (head == null) return;
-		System.out.println("After deleting maxNode");
-		displayTopCircularList();
+//		System.out.println("After deleting maxNode");
+//		displayTopCircularList();
 		maxNode = head;
 		// count the num of nodes in top circular list
 		Node curr = this.head;
@@ -72,9 +80,9 @@ public class FibonacciHeap {
 			int degree = curr.degree;
 			Node next = curr.next;
 			while(degreeMap.containsKey(degree)) {
-				System.out.println("meld("+degreeMap.get(degree).val+","+curr.val+")");
-				degreeMap.get(degree).display();
-				curr.display();
+				 System.out.println("meld("+degreeMap.get(degree).val+","+curr.val+")");
+				// degreeMap.get(degree).display();
+//				curr.display();
 				Node meldedNode = meld(degreeMap.get(degree), curr);
 				System.out.println("melded");
 				meldedNode.display();
@@ -127,8 +135,12 @@ public class FibonacciHeap {
 			return;
 		}
 		Node curr = this.head;
+		System.out.println("((((((((((((((((((((((((()))))))))))))))))))))))))");
 		do {
-			System.out.print(curr.val + "(children:" +curr.degree + ")-->");
+			System.out.print(curr.name + "("+ curr.val + ")" + "(degree:" +curr.degree + ")-->");
+//			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+//			curr.display();
+//			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			curr = curr.next;
 		} while (curr != this.head);
 		System.out.println("back to head");
@@ -141,6 +153,7 @@ public class FibonacciHeap {
 			head.next = head;
 			head.prev = head;
 			head.name = str;
+			head.parent = null;
 			maxNode = head;
 			return head;
 		}
@@ -152,6 +165,7 @@ public class FibonacciHeap {
 		lastNode.next = node;
 		node.val = frequency;
 		node.name = str;
+		node.parent = null;
 		if (node.val > maxNode.val) maxNode = node;
 		return node;
 	}
@@ -164,12 +178,16 @@ public class FibonacciHeap {
 			head.next = head;
 			head.prev = head;
 			head.name = node.name;
+			head.parent = null;
+			head.childCut = false;
 			maxNode = head;
 			return head;
 		}
 		Node lastNode = head.prev;
 		node.prev = lastNode;
 		node.next = head;
+		node.parent = null;
+		node.childCut = false;
 		head.prev = node;
 		lastNode.next = node;
 		if (node.val > maxNode.val) maxNode = node;
@@ -182,6 +200,10 @@ public class FibonacciHeap {
 			Node parent = node.parent;
 			cutFromParent(node, parent);
 			cascadingCut(parent);
+		} else {
+			if (node.val > maxNode.val) {
+				maxNode = node;
+			}
 		}
 	}
 	
@@ -233,19 +255,29 @@ class Node {
 			node.next = node;
 			node.prev = node;
 		} else {
-			Node lastNode = this.child.prev;
-			node.prev = lastNode;
-			node.next = this.child;
-			lastNode.next = node;
+//			Node lastNode = this.child.prev;
+//			node.prev = lastNode;
+//			node.next = this.child;
+//			lastNode.next = node;
+			
+			node.prev = this.child;
+			node.next = this.child.next;
+			this.child.next = node;
+			this.child.prev = node;
+			
+			
 		}
 		node.parent = this;
 	}
 	
 	void display() {
 		System.out.println("name:" + name + " val:" + val + " degree:" + degree);
+		if (parent != null) {
+			System.out.println("parent:"+parent.name + "val:" + parent.val);
+		}
 		Node curr = this.child;
 		for (int i = 0; i < degree; i++) {
-			System.out.print(curr.val + "[children:" +curr.degree + "]--");
+			System.out.print(curr.name + "("+curr.val+")" + "[children:" +curr.degree + "]--");
 			curr = curr.next;
 		}
 		System.out.println();
