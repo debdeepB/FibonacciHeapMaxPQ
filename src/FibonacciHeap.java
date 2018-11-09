@@ -9,7 +9,7 @@ public class FibonacciHeap {
 	
 	public void insertOrUpdate(String str, int frequency) {
 		if (map.containsKey(str)) {
-			increaseKey(str, frequency);
+			increaseKey(map.get(str), frequency);
 		} else {
 			Node node = insert(str, frequency);
 			map.put(str, node);
@@ -172,11 +172,46 @@ public class FibonacciHeap {
 		node.next = head;
 		head.prev = node;
 		lastNode.next = node;
+		if (node.val > maxNode.val) maxNode = node;
 		return node;
 	}
 	
-	void increaseKey(String str, int frequency) {
-		return;
+	void increaseKey(Node node, int val) {
+		node.val += val;
+		if (node.parent != null && node.val > node.parent.val) {
+			Node parent = node.parent;
+			cutFromParent(node, parent);
+			cascadingCut(parent);
+		}
+	}
+	
+	void cutFromParent(Node node, Node parent) {
+		// reset child pointer of parent
+		if (parent.child == node) {
+			parent.child = node.next;
+		}
+		// remove node from doubly linked list
+		node.prev.next = node.next;
+		node.next.prev = node.prev;
+		node.parent = null;
+		insert(node);
+		node.childCut = false; // now that it's top level
+		parent.degree--;
+		if (parent.degree == 0) {
+			parent.child = null;
+		}
+	}
+	
+	void cascadingCut(Node node) {
+		Node parent = node.parent;
+		if (parent != null) {
+			if (node.childCut == false) {
+				node.childCut = true;
+			} else {
+				cutFromParent(node, parent);
+				cascadingCut(parent);
+			}
+		}
 	}
 
 }
@@ -186,6 +221,7 @@ class Node {
 	Node prev;
 	Node child;
 	Node parent;
+	boolean childCut = false;
 	int val;
 	int degree = 0;
 	String name;
@@ -202,6 +238,7 @@ class Node {
 			node.next = this.child;
 			lastNode.next = node;
 		}
+		node.parent = this;
 	}
 	
 	void display() {
