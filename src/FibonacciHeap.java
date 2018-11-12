@@ -26,7 +26,9 @@ public class FibonacciHeap {
 			result.add(maxNode.name);
 			System.out.println("deleting "+maxNode.name);
 			System.out.println("********************************");
+			displayTopCircularList();
 			deleteMax();
+			System.out.println("After deleting");
 			displayTopCircularList();
 		}
 		
@@ -49,10 +51,20 @@ public class FibonacciHeap {
 		for (int i = 0; i < maxNode.degree; i++) {
 			// System.out.println("Inserting" + child.val);
 			Node sibling = child.next;
+			System.out.println("sibling:"+sibling.name);
 			// detach it from the linked list
 			child.prev.next = child.next;
 			child.next.prev = child.prev;
-			insert(child);
+			
+			// attach to root list
+			child.prev = head;
+			child.next = head.next;
+			head.next = child;
+			child.next.prev = child;
+			
+			child.parent = null;
+
+			System.out.println("child "+i+":");
 			child.display();
 			
 			child = sibling;
@@ -135,7 +147,7 @@ public class FibonacciHeap {
 			return;
 		}
 		Node curr = this.head;
-		System.out.println("((((((((((((((((((((((((()))))))))))))))))))))))))");
+//		System.out.println("((((((((((((((((((((((((()))))))))))))))))))))))))");
 		do {
 			System.out.print(curr.name + "("+ curr.val + ")" + "(degree:" +curr.degree + ")-->");
 //			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -255,29 +267,26 @@ class Node {
 			node.next = node;
 			node.prev = node;
 		} else {
-//			Node lastNode = this.child.prev;
-//			node.prev = lastNode;
-//			node.next = this.child;
-//			lastNode.next = node;
-			
-			node.prev = this.child;
-			node.next = this.child.next;
-			this.child.next = node;
+			Node lastNode = this.child.prev;
+			node.prev = lastNode;
+			node.next = this.child;
+			lastNode.next = node;
 			this.child.prev = node;
-			
-			
 		}
 		node.parent = this;
 	}
 	
 	void display() {
-		System.out.println("name:" + name + " val:" + val + " degree:" + degree);
+		System.out.println("name: " + name + " val: " + val + " degree: " + degree);
+		System.out.println("prev: " + prev.name + " prev.val: " + prev.val + "prev.degree: " + prev.degree);
+		System.out.println("next: " + next.name + " next.val: " + next.val + " degree: " + next.degree);
 		if (parent != null) {
 			System.out.println("parent:"+parent.name + "val:" + parent.val);
 		}
 		Node curr = this.child;
 		for (int i = 0; i < degree; i++) {
-			System.out.print(curr.name + "("+curr.val+")" + "[children:" +curr.degree + "]--");
+			System.out.println(curr.name + "("+curr.val+")" + "[children:" +curr.degree + "]--");
+			curr.display();
 			curr = curr.next;
 		}
 		System.out.println();

@@ -1,7 +1,9 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
 
 public class Main {
 
@@ -14,6 +16,8 @@ public class Main {
 		}
 		try {
 			File file = new File(args[0]);
+			File outFile = new File("output_file.txt");
+			FileWriter writer = new FileWriter(outFile);
 			FibonacciHeap fh = new FibonacciHeap();
 			sc = new Scanner(file);
 			while (sc.hasNextLine()) {
@@ -25,14 +29,20 @@ public class Main {
 				} else {
 					ArrayList<String> mostUsed = fh.getMostUsed(Integer.parseInt(line));
 					System.out.println("#########################################");
+					String resultString = "";
 					for (String res : mostUsed) {
+						resultString += res + ",";
 						System.out.println(res);
 					}
+					resultString = resultString.substring(0, resultString.length() - 1);
+					resultString += "\n";
+					writer.write(resultString);
 					fh.displayTopCircularList();
 					System.out.println("maxNode:"+fh.maxNode.name);
 				}
 			}
 			sc.close();
+			writer.close();
 			fh.displayTopCircularList();
 			System.out.println("maxNode:"+fh.maxNode.name);
 		} catch (FileNotFoundException e) {

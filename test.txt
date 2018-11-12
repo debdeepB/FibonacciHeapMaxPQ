@@ -22,4 +22,8 @@ $ebay 12
 $netflix 6
 $cnn 5
 5
+$facebook 12
+5
+$netflix 60
+5
 stop
