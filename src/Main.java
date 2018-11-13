@@ -28,23 +28,17 @@ public class Main {
 					fh.insertOrUpdate(words[0].substring(1), Integer.parseInt(words[1]));
 				} else {
 					ArrayList<String> mostUsed = fh.getMostUsed(Integer.parseInt(line));
-					System.out.println("#########################################");
 					String resultString = "";
 					for (String res : mostUsed) {
 						resultString += res + ",";
-						System.out.println(res);
 					}
 					resultString = resultString.substring(0, resultString.length() - 1);
 					resultString += "\n";
 					writer.write(resultString);
-					fh.displayTopCircularList();
-					System.out.println("maxNode:"+fh.maxNode.name);
 				}
 			}
 			sc.close();
 			writer.close();
-			fh.displayTopCircularList();
-			System.out.println("maxNode:"+fh.maxNode.name);
 		} catch (FileNotFoundException e) {
 			System.out.println("Please enter a valid file url");
 			e.printStackTrace();

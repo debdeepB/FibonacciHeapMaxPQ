@@ -24,12 +24,7 @@ public class FibonacciHeap {
 		for (int i = 0; i < num; i++) {
 			deletedNodes.add(maxNode);
 			result.add(maxNode.name);
-			System.out.println("deleting "+maxNode.name);
-			System.out.println("********************************");
-			displayTopCircularList();
 			deleteMax();
-			System.out.println("After deleting");
-			displayTopCircularList();
 		}
 		
 		// insert it back into the fibHeap
@@ -45,27 +40,14 @@ public class FibonacciHeap {
 
 	void deleteMax() {
 		// take the children of maxNode and insert it to the top level circular list
-		// System.out.println("maxNode");
-		maxNode.display();
 		Node child = maxNode.child;
 		for (int i = 0; i < maxNode.degree; i++) {
-			// System.out.println("Inserting" + child.val);
 			Node sibling = child.next;
-			System.out.println("sibling:"+sibling.name);
-			// detach it from the linked list
+
 			child.prev.next = child.next;
 			child.next.prev = child.prev;
 			
-			// attach to root list
-			child.prev = head;
-			child.next = head.next;
-			head.next = child;
-			child.next.prev = child;
-			
-			child.parent = null;
-
-			System.out.println("child "+i+":");
-			child.display();
+			insert(child);
 			
 			child = sibling;
 		}
@@ -73,8 +55,6 @@ public class FibonacciHeap {
 		// detach maxNode from the toplevel circular list
 		remove(maxNode);
 		if (head == null) return;
-//		System.out.println("After deleting maxNode");
-//		displayTopCircularList();
 		maxNode = head;
 		// count the num of nodes in top circular list
 		Node curr = this.head;
@@ -92,12 +72,7 @@ public class FibonacciHeap {
 			int degree = curr.degree;
 			Node next = curr.next;
 			while(degreeMap.containsKey(degree)) {
-				 System.out.println("meld("+degreeMap.get(degree).val+","+curr.val+")");
-				// degreeMap.get(degree).display();
-//				curr.display();
 				Node meldedNode = meld(degreeMap.get(degree), curr);
-				System.out.println("melded");
-				meldedNode.display();
 				degreeMap.remove(degree);
 				degree = meldedNode.degree;
 				curr = meldedNode;
@@ -143,19 +118,14 @@ public class FibonacciHeap {
 	
 	public void displayTopCircularList() {
 		if (head == null) {
-			System.out.println("empty");
 			return;
 		}
 		Node curr = this.head;
-//		System.out.println("((((((((((((((((((((((((()))))))))))))))))))))))))");
 		do {
 			System.out.print(curr.name + "("+ curr.val + ")" + "(degree:" +curr.degree + ")-->");
-//			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-//			curr.display();
-//			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			curr = curr.next;
 		} while (curr != this.head);
-		System.out.println("back to head");
+		 System.out.println("back to head");
 	}
 	
 	Node insert(String str, int frequency) {
