@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class Main {
+public class KeywordCounter {
 
 	private static Scanner sc;
 
