@@ -5,10 +5,18 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
+/**
+ * @author debdeepbasu
+ * The driver class which uses the FibonacciHeap class to count the most used keywords.
+ */
 public class KeywordCounter {
 
 	private static Scanner sc;
 
+	/**
+	 * Pass the filename as input argument
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		if (args.length == 0) {
 			System.out.println("Please a command line argument");
