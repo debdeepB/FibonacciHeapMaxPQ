@@ -282,6 +282,7 @@ class Node {
 	String name;
 	
 	/**
+	 * Add a child by re-adjusting pointers. If the child is null, set it to this child. Other wise add it to the circular doubly linked list.
 	 * @param node Add this node as a child of the current node.
 	 */
 	public void addChild(Node node) {

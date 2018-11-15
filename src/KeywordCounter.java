@@ -14,8 +14,8 @@ public class KeywordCounter {
 	private static Scanner sc;
 
 	/**
-	 * Pass the filename as input argument
-	 * @param args
+	 * Pass the filename as a command line argument
+	 * @param args command line argument for filename
 	 */
 	public static void main(String[] args) {
 		if (args.length == 0) {
