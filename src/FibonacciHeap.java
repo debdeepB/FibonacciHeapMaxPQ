@@ -1,12 +1,30 @@
 import java.util.*;
 
+/**
+ * @author debdeepbasu
+ * Max FibonacciHeap implementation in Java. Supports insert O(1), the deleteMax O(logn), meld O(1) and increaseKey O(1) methods in amortized time complexity. 
+ *
+ */
 public class FibonacciHeap {
 	
 	private HashMap<String, Node> map = new HashMap<String, Node>();
 	
+	/**
+	 * The head pointer in the top level circular list
+	 */
 	Node head;
+	/**
+	 * The maxNode pointer always points to the node having the maximum key
+	 */
 	public Node maxNode;
 	
+	/**
+	 *
+	 * This method checks if the HashMap contains the keyword. If it is already present, it calls increaseKey to increase the key of the node in the heap.
+	 * Else it, creates a node and inserts it into the top level doubly linked list.
+	 * @param str Keyword of the inserted entry
+	 * @param frequency number of times the keyword has been entered
+	 */
 	public void insertOrUpdate(String str, int frequency) {
 		if (map.containsKey(str)) {
 			increaseKey(map.get(str), frequency);
@@ -16,6 +34,13 @@ public class FibonacciHeap {
 		}
 	}
 	
+	/**
+	 *
+	 * This method queries the heap to get the most used keywords by iteratively calling deleteMax 'num' numbers of times.
+	 * After retrieving all of the most used entries, it reinserts it into the heap, because we don't want to delete them.
+	 * @param num number of most used keywords to be retrieved from the heap
+	 * @return A list of keywords for the query
+	 */
 	public ArrayList<String> getMostUsed(int num) {
 		// do deleteMax num times and then reinsert it back into
 		// the fibHeap
@@ -38,6 +63,9 @@ public class FibonacciHeap {
 		return result;
 	}
 
+	/**
+	 * Deletes the max from the heap and reconstructs the heap by pairwise-merging. The maxNode points to the next largest node in the heap.
+	 */
 	void deleteMax() {
 		// take the children of maxNode and insert it to the top level circular list
 		Node child = maxNode.child;
@@ -63,7 +91,7 @@ public class FibonacciHeap {
 			size++;
 			curr = curr.next;
 		} while (curr != this.head);
-		// start melding
+		// start pairwise merging
 		HashMap<Integer, Node> degreeMap = new HashMap<Integer, Node>();
 		degreeMap.put(head.degree, head);
 		curr = head.next;
@@ -86,12 +114,15 @@ public class FibonacciHeap {
 		}
 	}
 	
-	void displayDegreeMap(HashMap<Integer, Node> map) {
-		for (int key: map.keySet()) {
-			System.out.println(key+":"+map.get(key).val);
-		}
-	}
 	
+	/**
+	 * 
+	 * Detach both trees from their circular lists. Make the node with smaller key the child of the node with the larger key. Insert melded node in the top level
+	 * circular list. 
+	 * @param node1 Node to be melded with node2
+	 * @param node2 Node to be melded with node1
+	 * @return The melded node
+	 */
 	Node meld(Node node1, Node node2) {
 		remove(node1);
 		remove(node2);
@@ -106,6 +137,10 @@ public class FibonacciHeap {
 		}
 	}
 	
+	/**
+	 * Remove a node from the top level circular list by re-adjusting the pointers.
+	 * @param node Remove this node from the top-level doubly linked circular list
+	 */
 	void remove(Node node) {
 		if (node.next == node) {
 			head = null;
@@ -116,18 +151,14 @@ public class FibonacciHeap {
 		if (head == node) head = node.next;
 	}
 	
-	public void displayTopCircularList() {
-		if (head == null) {
-			return;
-		}
-		Node curr = this.head;
-		do {
-			System.out.print(curr.name + "("+ curr.val + ")" + "(degree:" +curr.degree + ")-->");
-			curr = curr.next;
-		} while (curr != this.head);
-		 System.out.println("back to head");
-	}
+
 	
+	/**
+	 * Insert a new keyword in the heap in the top level doubly linked circular list.
+	 * @param str Keyword of the to be inserted entry
+	 * @param frequency frequency of the to be inserted entry
+	 * @return The inserted node
+	 */
 	Node insert(String str, int frequency) {
 		if (head == null) {
 			head = new Node();
@@ -152,6 +183,11 @@ public class FibonacciHeap {
 		return node;
 	}
 	
+	/**
+	 * Insert the node into the top level doubly linked list. Readjust maxNode and head pointers if necessary.
+	 * @param node Insert this node in the top level doubly linked circular list
+	 * @return the inserted node
+	 */
 	Node insert(Node node) {
 		if (node == null) return null;
 		if (head == null) {
@@ -176,6 +212,11 @@ public class FibonacciHeap {
 		return node;
 	}
 	
+	/**
+	 * Increase the key of this node, cascading cut may follow if it's value is greater than that of it's parent.
+	 * @param node The node whose key is to be increased.
+	 * @param val The value by which the key should be increased by.
+	 */
 	void increaseKey(Node node, int val) {
 		node.val += val;
 		if (node.parent != null && node.val > node.parent.val) {
@@ -189,6 +230,12 @@ public class FibonacciHeap {
 		}
 	}
 	
+	/**
+	 * 
+	 * Cut this node from it's parent.
+	 * @param node The Node which is going to get cut from it's parent
+	 * @param parent parent of the node which is about to lose a child
+	 */
 	void cutFromParent(Node node, Node parent) {
 		// reset child pointer of parent
 		if (parent.child == node) {
@@ -206,6 +253,10 @@ public class FibonacciHeap {
 		}
 	}
 	
+	
+	/**
+	 * @param node Perform cascading cuts on this node and keep going up until you parent is null
+	 */
 	void cascadingCut(Node node) {
 		Node parent = node.parent;
 		if (parent != null) {
@@ -230,6 +281,9 @@ class Node {
 	int degree = 0;
 	String name;
 	
+	/**
+	 * @param node Add this node as a child of the current node.
+	 */
 	public void addChild(Node node) {
 		degree++;
 		if (this.child == null) {
@@ -246,6 +300,10 @@ class Node {
 		node.parent = this;
 	}
 	
+	
+	/**
+	 * Display this node in the console. 
+	 */
 	void display() {
 		System.out.println("name: " + name + " val: " + val + " degree: " + degree);
 		System.out.println("prev: " + prev.name + " prev.val: " + prev.val + "prev.degree: " + prev.degree);
